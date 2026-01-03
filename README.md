@@ -172,6 +172,97 @@ npm run start:http
 npx documents-mcp-http
 ```
 
+The HTTP server exposes:
+- `GET /sse` - SSE endpoint for MCP clients
+- `POST /messages?sessionId=<id>` - Message endpoint for SSE sessions
+- `GET /health` - Health check endpoint
+
+## Client SDK
+
+Use the client SDK to connect to the documents-mcp server programmatically:
+
+```typescript
+import { createClient } from "documents-mcp/client";
+
+// Connect via STDIO (for CLI usage)
+const client = createClient({
+  transport: "stdio",
+  command: "documents-mcp",
+});
+
+await client.connect();
+
+// List available tools
+const tools = await client.listTools();
+console.log(tools);
+
+// Create a PDF
+const result = await client.createPdf({
+  title: "My Document",
+  content: [
+    { type: "heading", content: "Hello World", level: 1 },
+    { type: "text", content: "This is a sample document." },
+  ],
+});
+
+console.log(result.content); // { success: true, filePath: "...", pageCount: 1 }
+
+await client.disconnect();
+```
+
+### SSE Transport
+
+For HTTP/SSE connections:
+
+```typescript
+const client = createClient({
+  transport: "sse",
+  url: "http://localhost:3000/sse",
+});
+
+await client.connect();
+// ... use client methods
+await client.disconnect();
+```
+
+### Available Client Methods
+
+| Method | Description |
+|--------|-------------|
+| `connect()` | Connect to the MCP server |
+| `disconnect()` | Disconnect from the server |
+| `listTools()` | List available tools |
+| `callTool(name, args)` | Call any tool by name |
+| `createPdf(options)` | Create a PDF document |
+| `createDocx(options)` | Create a Word document |
+| `createPptx(options)` | Create a PowerPoint presentation |
+| `readPdf(options)` | Extract text from a PDF |
+| `readDocx(options)` | Extract text from a Word document |
+| `readPptx(options)` | Extract text from a PowerPoint |
+
+## Programmatic Usage (Direct)
+
+You can also use the document tools directly without the MCP server:
+
+```typescript
+import { createPdf, readPdf } from "documents-mcp";
+
+// Create a PDF
+const result = await createPdf.handler(
+  createPdf.schema.parse({
+    title: "My Document",
+    content: [{ type: "text", content: "Hello World" }],
+  })
+);
+
+// Read a PDF
+const extracted = await readPdf.handler(
+  readPdf.schema.parse({
+    filePath: "/path/to/document.pdf",
+  })
+);
+```
+
 ## Development
 
 ```bash

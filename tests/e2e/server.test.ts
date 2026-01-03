@@ -46,7 +46,7 @@ describe("E2E Tests: MCP Server", () => {
     }, 30000);
 
     it("should build STDIO server binary", async () => {
-      const stdioPath = path.join(process.cwd(), "dist/stdio.js");
+      const stdioPath = path.join(process.cwd(), "dist/server/stdio.js");
       const stats = await fs.stat(stdioPath);
       expect(stats.size).toBeGreaterThan(0);
     });
@@ -54,7 +54,7 @@ describe("E2E Tests: MCP Server", () => {
 
   describe("HTTP Transport", () => {
     it("should build HTTP server binary", async () => {
-      const httpPath = path.join(process.cwd(), "dist/http.js");
+      const httpPath = path.join(process.cwd(), "dist/server/http.js");
       const stats = await fs.stat(httpPath);
       expect(stats.size).toBeGreaterThan(0);
     });
@@ -66,8 +66,8 @@ describe("E2E Tests: MCP Server", () => {
         "package.json",
         "README.md",
         "LICENSE",
-        "dist/stdio.js",
-        "dist/http.js",
+        "dist/server/stdio.js",
+        "dist/server/http.js",
       ];
 
       for (const file of requiredFiles) {
@@ -85,8 +85,8 @@ describe("E2E Tests: MCP Server", () => {
       expect(packageJson.name).toBe("documents-mcp");
       expect(packageJson.version).toBeDefined();
       expect(packageJson.bin).toBeDefined();
-      expect(packageJson.bin["documents-mcp"]).toBe("./dist/stdio.js");
-      expect(packageJson.bin["documents-mcp-http"]).toBe("./dist/http.js");
+      expect(packageJson.bin["documents-mcp"]).toBe("./dist/server/stdio.js");
+      expect(packageJson.bin["documents-mcp-http"]).toBe("./dist/server/http.js");
       expect(packageJson.scripts.build).toBeDefined();
     });
 
@@ -233,7 +233,7 @@ describe("E2E Tests: MCP Server", () => {
  */
 async function runStdioCommand(message: object): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn("node", ["dist/stdio.js"], {
+    const child = spawn("node", ["dist/server/stdio.js"], {
       cwd: process.cwd(),
       stdio: ["pipe", "pipe", "pipe"],
     });

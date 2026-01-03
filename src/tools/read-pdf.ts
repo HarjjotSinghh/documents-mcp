@@ -4,12 +4,12 @@ import { Buffer } from "node:buffer";
 import process from "node:process";
 import { z } from "zod";
 
-import { analyzeDocument } from "../lib/ai";
+import { analyzeDocument } from "../lib/ai.js";
 
 /**
  * Tool input schema
  */
-const name = "read-pdf";
+export const name = "read-pdf";
 export const schema = z.object({
   filePath: z
     .string()
@@ -28,7 +28,7 @@ export const schema = z.object({
   { message: "Either filePath or base64Content must be provided" }
 );
 
-const description = "Extract text content and metadata from a PDF file. Can also perform AI analysis if a prompt is provided.";
+export const description = "Extract text content and metadata from a PDF file. Can also perform AI analysis if a prompt is provided.";
 
 /**
  * Main tool handler
