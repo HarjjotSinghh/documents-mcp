@@ -1,0 +1,77 @@
+{
+  "name": "documents-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for creating and reading PDF, DOCX, and PPTX documents",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "documents-mcp": "./dist/stdio.js",
+    "documents-mcp-http": "./dist/http.js"
+  },
+  "scripts": {
+    "dev": "xmcp dev",
+    "build": "xmcp build",
+    "start:stdio": "node dist/stdio.js",
+    "start:http": "node dist/http.js",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "vitest run tests/e2e",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarjjotSinghh/documents-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "pdf",
+    "docx",
+    "pptx",
+    "document-generation",
+    "ai",
+    "llm",
+    "claude",
+    "openai",
+    "anthropic"
+  ],
+  "author": "Harjjot Singh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HarjjotSinghh/documents-mcp/issues"
+  },
+  "homepage": "https://github.com/HarjjotSinghh/documents-mcp#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "docx": "^9.4.1",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.9.0",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^1.1.1",
+    "pptxgenjs": "^3.12.0",
+    "xmcp": "^0.0.18",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.3",
+    "typescript": "^5.7.3",
+    "vitest": "^4.0.16"
+  }
+}
