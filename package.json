@@ -1,6 +1,6 @@
 {
   "name": "documents-mcp",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "MCP server for creating and reading PDF, DOCX, and PPTX documents",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "xmcp dev",
-    "build": "xmcp build",
+    "build": "xmcp build && tsc && node scripts/add-shebang.js",
     "start:stdio": "node dist/stdio.js",
     "start:http": "node dist/http.js",
     "test": "vitest run",

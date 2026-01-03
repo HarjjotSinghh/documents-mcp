@@ -3,12 +3,12 @@ import * as fs from "fs/promises";
 import * as path from "path";
 
 // Import tools (default exports)
-import createPdfTool from "../../src/tools/create-pdf";
-import createDocxTool from "../../src/tools/create-docx";
-import createPptxTool from "../../src/tools/create-pptx";
-import readPdfTool from "../../src/tools/read-pdf";
-import readDocxTool from "../../src/tools/read-docx";
-import readPptxTool from "../../src/tools/read-pptx";
+import createPdfHandler, { schema as createPdfSchema } from "../../src/tools/create-pdf";
+import createDocxHandler, { schema as createDocxSchema } from "../../src/tools/create-docx";
+import createPptxHandler, { schema as createPptxSchema } from "../../src/tools/create-pptx";
+import readPdfHandler, { schema as readPdfSchema } from "../../src/tools/read-pdf";
+import readDocxHandler, { schema as readDocxSchema } from "../../src/tools/read-docx";
+import readPptxHandler, { schema as readPptxSchema } from "../../src/tools/read-pptx";
 
 // Mock AI helper
 vi.mock("../../src/lib/ai", () => ({
@@ -45,7 +45,7 @@ describe("Unit Tests: Document Tools", () => {
           { type: "text", content: "This is a test paragraph." } as const,
         ],
       };
-      const result = await createPdfTool.handler(createPdfTool.schema.parse(input));
+      const result = await createPdfHandler(createPdfSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.base64).toBeDefined();
@@ -65,7 +65,7 @@ describe("Unit Tests: Document Tools", () => {
           { type: "text", content: "Body text under heading." } as const,
         ],
       };
-      const result = await createPdfTool.handler(createPdfTool.schema.parse(input));
+      const result = await createPdfHandler(createPdfSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.base64).toBeDefined();
@@ -85,7 +85,7 @@ describe("Unit Tests: Document Tools", () => {
           },
         ],
       };
-      const result = await createPdfTool.handler(createPdfTool.schema.parse(input));
+      const result = await createPdfHandler(createPdfSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.base64).toBeDefined();
@@ -99,7 +99,7 @@ describe("Unit Tests: Document Tools", () => {
         content: [{ type: "text", content: "This PDF is saved to disk." } as const],
         outputPath,
       };
-      const result = await createPdfTool.handler(createPdfTool.schema.parse(input));
+      const result = await createPdfHandler(createPdfSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.filePath).toBe(outputPath);
@@ -118,7 +118,7 @@ describe("Unit Tests: Document Tools", () => {
           { type: "paragraph", content: "This is a test paragraph." } as const,
         ],
       };
-      const result = await createDocxTool.handler(createDocxTool.schema.parse(input));
+      const result = await createDocxHandler(createDocxSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.base64).toBeDefined();
@@ -137,7 +137,7 @@ describe("Unit Tests: Document Tools", () => {
         content: [{ type: "paragraph", content: "This DOCX is saved to disk." } as const],
         outputPath,
       };
-      const result = await createDocxTool.handler(createDocxTool.schema.parse(input));
+      const result = await createDocxHandler(createDocxSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.filePath).toBe(outputPath);
@@ -160,7 +160,7 @@ describe("Unit Tests: Document Tools", () => {
           } as const,
         ],
       };
-      const result = await createPptxTool.handler(createPptxTool.schema.parse(input));
+      const result = await createPptxHandler(createPptxSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.base64).toBeDefined();
@@ -180,7 +180,7 @@ describe("Unit Tests: Document Tools", () => {
         slides: [{ title: "Saved Slide", layout: "title" } as const],
         outputPath,
       };
-      const result = await createPptxTool.handler(createPptxTool.schema.parse(input));
+      const result = await createPptxHandler(createPptxSchema.parse(input));
 
       expect(result.success).toBe(true);
       expect(result.filePath).toBe(outputPath);
@@ -199,12 +199,12 @@ describe("Unit Tests: Document Tools", () => {
         content: [{ type: "text", content: "Test content for reading." } as const],
         outputPath: pdfPath,
       };
-      await createPdfTool.handler(createPdfTool.schema.parse(createInput));
+      await createPdfHandler(createPdfSchema.parse(createInput));
 
       const readInput = {
         filePath: pdfPath,
       };
-      const result = await readPdfTool.handler(readPdfTool.schema.parse(readInput));
+      const result = await readPdfHandler(readPdfSchema.parse(readInput));
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -232,7 +232,7 @@ describe("Unit Tests: Document Tools", () => {
       // but for this unit test mocking readFile/Buffer or ensuring minimal structure is key.
       // Let's create a real valid minimal PDF using createPdf first.
       const createInput = { title: "AI PDF", content: [{ type:"text", content:"content" }] };
-      const createResult = await createPdfTool.handler(createPdfTool.schema.parse(createInput));
+      const createResult = await createPdfHandler(createPdfSchema.parse(createInput));
       
       if (!createResult.success || !createResult.base64) throw new Error("Failed to create PDF");
 
@@ -241,7 +241,7 @@ describe("Unit Tests: Document Tools", () => {
         prompt: "Analyze this",
       };
 
-      const result = await readPdfTool.handler(readPdfTool.schema.parse(readInput));
+      const result = await readPdfHandler(readPdfSchema.parse(readInput));
 
       expect(result.success).toBe(true);
       expect(analyzeDocument).toHaveBeenCalled();
@@ -260,10 +260,10 @@ describe("Unit Tests: Document Tools", () => {
         content: [{ type: "paragraph", content: "This is readable content." } as const],
         outputPath: docxPath,
       };
-      await createDocxTool.handler(createDocxTool.schema.parse(createInput));
+      await createDocxHandler(createDocxSchema.parse(createInput));
 
       const readInput = { filePath: docxPath };
-      const result = await readDocxTool.handler(readDocxTool.schema.parse(readInput));
+      const result = await readDocxHandler(readDocxSchema.parse(readInput));
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -279,7 +279,7 @@ describe("Unit Tests: Document Tools", () => {
       });
 
       const createInput = { title: "AI DOCX", content: [{ type:"paragraph", content:"content" }] };
-      const createResult = await createDocxTool.handler(createDocxTool.schema.parse(createInput));
+      const createResult = await createDocxHandler(createDocxSchema.parse(createInput));
 
       if (!createResult.success || !createResult.base64) throw new Error("Failed to create DOCX");
 
@@ -288,7 +288,7 @@ describe("Unit Tests: Document Tools", () => {
         prompt: "Analyze this",
       };
 
-      const result = await readDocxTool.handler(readDocxTool.schema.parse(readInput));
+      const result = await readDocxHandler(readDocxSchema.parse(readInput));
 
       expect(result.success).toBe(true);
       expect(analyzeDocument).toHaveBeenCalled();
@@ -306,10 +306,10 @@ describe("Unit Tests: Document Tools", () => {
         slides: [{ title: "Slide 1", layout: "title" } as const],
         outputPath: pptxPath,
       };
-      await createPptxTool.handler(createPptxTool.schema.parse(createInput));
+      await createPptxHandler(createPptxSchema.parse(createInput));
 
       const readInput = { filePath: pptxPath };
-      const result = await readPptxTool.handler(readPptxTool.schema.parse(readInput));
+      const result = await readPptxHandler(readPptxSchema.parse(readInput));
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -330,7 +330,7 @@ describe("Unit Tests: Document Tools", () => {
         title: "AI PPTX",
         slides: [{ title: "Slide 1", layout: "title" } as const],
       };
-      const createResult = await createPptxTool.handler(createPptxTool.schema.parse(createInput));
+      const createResult = await createPptxHandler(createPptxSchema.parse(createInput));
 
       if (!createResult.success || !createResult.base64) throw new Error("Failed to create PPTX");
 
@@ -339,7 +339,7 @@ describe("Unit Tests: Document Tools", () => {
         prompt: "Analyze this",
       };
 
-      const result = await readPptxTool.handler(readPptxTool.schema.parse(readInput));
+      const result = await readPptxHandler(readPptxSchema.parse(readInput));
 
       expect(result.success).toBe(true);
       expect(analyzeDocument).toHaveBeenCalled();

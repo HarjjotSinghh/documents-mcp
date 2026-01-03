@@ -99,15 +99,13 @@ jobs:
     needs: [test, lint]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
+    permissions:
+      contents: read
+      id-token: write
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -122,6 +120,4 @@ jobs:
         run: npm run build
 
       - name: Publish to JSR
-        run: deno publish
-        env:
-          JSR_TOKEN: ${{ secrets.JSR_TOKEN }}
+        run: npx jsr publish

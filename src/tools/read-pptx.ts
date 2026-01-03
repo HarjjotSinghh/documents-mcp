@@ -1,11 +1,13 @@
-import * as fs from "fs/promises";
-import * as path from "path";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
+import { Buffer } from "node:buffer";
+import process from "node:process";
 import { z } from "zod";
 import JSZip from "jszip";
 import { analyzeDocument } from "../lib/ai";
 
 const name = "read-pptx";
-const schema = z.object({
+export const schema = z.object({
   filePath: z
     .string()
     .optional()
@@ -138,9 +140,9 @@ async function handler(input: z.infer<typeof schema>) {
   }
 }
 
-export default {
+export const metadata = {
   name,
   description,
-  schema,
-  handler,
 };
+
+export default handler;

@@ -12,8 +12,10 @@ import {
   AlignmentType,
   BorderStyle,
 } from "docx";
-import * as fs from "fs/promises";
-import * as path from "path";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
+import { Buffer } from "node:buffer";
+import process from "node:process";
 import { z } from "zod";
 
 /**
@@ -162,7 +164,7 @@ function getAlignment(
 /**
  * Main tool handler
  */
-export async function handler(input: z.infer<typeof schema>) {
+export default async function handler(input: z.infer<typeof schema>) {
   const outputDir = getOutputDir();
   const { title, author, content, outputPath } = input;
 
@@ -391,9 +393,7 @@ export async function handler(input: z.infer<typeof schema>) {
   };
 }
 
-export default {
+export const metadata = {
   name,
   description,
-  schema,
-  handler,
 };

@@ -7,8 +7,9 @@ An MCP (Model Context Protocol) server that provides AI agents with tools to cre
 - **Create PDF** - Generate PDF documents with text, headings, tables, images, and page numbers
 - **Create DOCX** - Generate Word documents with headings, paragraphs, lists, tables, and images
 - **Create PPTX** - Generate PowerPoint presentations with slides, text, shapes, tables, and charts
-- **Read PDF** - Extract text content and metadata from PDF files
-- **Read DOCX** - Extract text and HTML content from Word documents
+- **Read PDF** - Extract text content and metadata from PDF files (supports Gemini AI analysis)
+- **Read DOCX** - Extract text and HTML content from Word documents (supports Gemini AI analysis)
+- **Read PPTX** - Extract text content from PowerPoint presentations (supports Gemini AI analysis)
 
 ## Installation
 
@@ -72,7 +73,7 @@ All environment variables are optional. Configure only the providers you need:
 
 ## Tool Reference
 
-### create-pdf
+### `create-pdf`
 
 Create a PDF document with structured content.
 
@@ -88,7 +89,7 @@ Create a PDF document with structured content.
 - `outputPath` (optional): File path to save the PDF
 - `pageSize` (optional): "A4", "Letter", or "Legal"
 
-### create-docx
+### `create-docx`
 
 Create a Word document with rich formatting.
 
@@ -106,7 +107,7 @@ Create a Word document with rich formatting.
   - `{ type: "pageBreak" }`
 - `outputPath` (optional): File path to save the DOCX
 
-### create-pptx
+### `create-pptx`
 
 Create a PowerPoint presentation.
 
@@ -127,17 +128,18 @@ Create a PowerPoint presentation.
   - `notes` (optional): Speaker notes
 - `outputPath` (optional): File path to save the PPTX
 
-### read-pdf
+### `read-pdf`
 
 Extract text content from a PDF file.
 
 **Parameters:**
 - `filePath` (optional): Path to the PDF file
 - `base64Content` (optional): Base64-encoded PDF content
+- `prompt` (optional): Instruction for AI analysis (requires `GOOGLE_API_KEY`)
 
-**Returns:** `{ text, metadata: { pageCount, info, version }, characterCount, wordCount }`
+**Returns:** `{ text, metadata: { pageCount, info, version }, characterCount, wordCount, aiAnalysis? }`
 
-### read-docx
+### `read-docx`
 
 Extract text content from a Word document.
 
@@ -145,8 +147,20 @@ Extract text content from a Word document.
 - `filePath` (optional): Path to the DOCX file
 - `base64Content` (optional): Base64-encoded DOCX content
 - `outputFormat` (optional): "text", "html", or "both"
+- `prompt` (optional): Instruction for AI analysis (requires `GOOGLE_API_KEY`)
 
-**Returns:** `{ text?, html?, characterCount, wordCount }`
+**Returns:** `{ text?, html?, characterCount, wordCount, aiAnalysis? }`
+
+### `read-pptx`
+
+Extract text content from a PowerPoint presentation.
+
+**Parameters:**
+- `filePath` (optional): Path to the PPTX file
+- `base64Content` (optional): Base64-encoded PPTX content
+- `prompt` (optional): Instruction for AI analysis (requires `GOOGLE_API_KEY`)
+
+**Returns:** `{ text, slideCount, slides: [{slide, text}], aiAnalysis? }`
 
 ## Running as HTTP Server
 

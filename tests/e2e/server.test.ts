@@ -112,14 +112,14 @@ describe("E2E Tests: MCP Server", () => {
 
       try {
         // Import handler and schema dynamically to pick up env change
-        const { default: createPdfTool } = await import("../../src/tools/create-pdf");
+        const { default: createPdfHandler, schema: createPdfSchema } = await import("../../src/tools/create-pdf");
         
         const input = {
           title: "Env Test",
           content: [{ type: "text", content: "Testing OUTPUT_DIR" } as const],
           outputPath: "env-test.pdf",
         };
-        const result = await createPdfTool.handler(createPdfTool.schema.parse(input));
+        const result = await createPdfHandler(createPdfSchema.parse(input));
 
         expect(result.success).toBe(true);
         expect(result.filePath).toContain("custom-output");
@@ -142,12 +142,12 @@ describe("E2E Tests: MCP Server", () => {
 
   describe("Error Handling", () => {
     it("should handle invalid input gracefully", async () => {
-      const { default: createPdfTool } = await import("../../src/tools/create-pdf");
+      const { default: createPdfHandler } = await import("../../src/tools/create-pdf");
       
       // This should throw a Zod validation error
       try {
         // @ts-expect-error - intentionally passing invalid input
-        await createPdfTool.handler({
+        await createPdfHandler({
           // Missing required 'title' field
           content: [],
         });
@@ -158,9 +158,9 @@ describe("E2E Tests: MCP Server", () => {
     });
 
     it("should handle invalid file paths gracefully", async () => {
-      const { default: readPdfTool } = await import("../../src/tools/read-pdf");
+      const { default: readPdfHandler } = await import("../../src/tools/read-pdf");
       
-      const result = await readPdfTool.handler({
+      const result = await readPdfHandler({
         filePath: "/this/path/does/not/exist.pdf",
       });
 
@@ -169,9 +169,9 @@ describe("E2E Tests: MCP Server", () => {
     });
 
     it("should handle malformed base64 content gracefully", async () => {
-      const { default: readDocxTool } = await import("../../src/tools/read-docx");
+      const { default: readDocxHandler, schema: readDocxSchema } = await import("../../src/tools/read-docx");
       
-      const result = await readDocxTool.handler(readDocxTool.schema.parse({
+      const result = await readDocxHandler(readDocxSchema.parse({
         base64Content: "not-valid-base64!!!",
       }));
 
@@ -181,14 +181,14 @@ describe("E2E Tests: MCP Server", () => {
 
   describe("Performance", () => {
     it("should create a simple PDF in under 1 second", async () => {
-      const { default: createPdfTool } = await import("../../src/tools/create-pdf");
+      const { default: createPdfHandler, schema: createPdfSchema } = await import("../../src/tools/create-pdf");
       
       const start = Date.now();
       const input = {
         title: "Performance Test",
         content: [{ type: "text", content: "Quick test." } as const],
       };
-      const result = await createPdfTool.handler(createPdfTool.schema.parse(input));
+      const result = await createPdfHandler(createPdfSchema.parse(input));
       const duration = Date.now() - start;
 
       expect(result.success).toBe(true);
@@ -196,14 +196,14 @@ describe("E2E Tests: MCP Server", () => {
     });
 
     it("should create a simple DOCX in under 1 second", async () => {
-      const { default: createDocxTool } = await import("../../src/tools/create-docx");
+      const { default: createDocxHandler, schema: createDocxSchema } = await import("../../src/tools/create-docx");
       
       const start = Date.now();
       const input = {
         title: "Performance Test",
         content: [{ type: "paragraph", content: "Quick test." } as const],
       };
-      const result = await createDocxTool.handler(createDocxTool.schema.parse(input));
+      const result = await createDocxHandler(createDocxSchema.parse(input));
       const duration = Date.now() - start;
 
       expect(result.success).toBe(true);
@@ -211,14 +211,14 @@ describe("E2E Tests: MCP Server", () => {
     });
 
     it("should create a simple PPTX in under 2 seconds", async () => {
-      const { default: createPptxTool } = await import("../../src/tools/create-pptx");
+      const { default: createPptxHandler, schema: createPptxSchema } = await import("../../src/tools/create-pptx");
       
       const start = Date.now();
       const input = {
         title: "Performance Test",
         slides: [{ title: "Quick", layout: "title" } as const],
       };
-      const result = await createPptxTool.handler(createPptxTool.schema.parse(input));
+      const result = await createPptxHandler(createPptxSchema.parse(input));
       const duration = Date.now() - start;
 
       expect(result.success).toBe(true);

@@ -20,12 +20,11 @@ Create a `jsr.json` file in your project root:
   "name": "@harjjotsinghh/documents-mcp",
   "version": "1.0.0",
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./src/index.ts"
   },
   "publish": {
     "include": [
-      "dist/**/*.js",
-      "dist/**/*.d.ts",
+      "src/**/*.ts",
       "README.md",
       "LICENSE"
     ]
@@ -58,9 +57,9 @@ npx jsr publish --dry-run
 ### 4. Publish
 
 ```bash
-deno publish
+deno publish --allow-slow-types
 # or
-npx jsr publish
+npx jsr publish --allow-slow-types
 ```
 
 ### 5. Verify Publication

@@ -1,5 +1,7 @@
-import * as fs from "fs/promises";
-import * as path from "path";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
+import { Buffer } from "node:buffer";
+import process from "node:process";
 import { z } from "zod";
 
 import { analyzeDocument } from "../lib/ai";
@@ -8,7 +10,7 @@ import { analyzeDocument } from "../lib/ai";
  * Tool input schema
  */
 const name = "read-pdf";
-const schema = z.object({
+export const schema = z.object({
   filePath: z
     .string()
     .optional()
@@ -144,9 +146,9 @@ async function handler(input: z.infer<typeof schema>) {
   }
 }
 
-export default {
+export const metadata = {
   name,
   description,
-  schema,
-  handler,
 };
+
+export default handler;

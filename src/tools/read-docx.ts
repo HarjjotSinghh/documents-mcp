@@ -1,5 +1,6 @@
-import * as fs from "fs/promises";
-import * as path from "path";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
+import { Buffer } from "node:buffer";
 import { z } from "zod";
 import * as mammoth from "mammoth";
 
@@ -9,7 +10,7 @@ import * as mammoth from "mammoth";
 import { analyzeDocument } from "../lib/ai";
 
 const name = "read-docx";
-const schema = z.object({
+export const schema = z.object({
   filePath: z
     .string()
     .optional()
@@ -34,7 +35,7 @@ const schema = z.object({
 
 const description = "Extract text content from a DOCX (Word) file. Can also perform AI analysis if a prompt is provided.";
 
-interface MammothMessage {
+export interface MammothMessage {
   type: string;
   message: string;
 }
@@ -133,9 +134,9 @@ async function handler(input: z.infer<typeof schema>) {
   }
 }
 
-export default {
+export const metadata = {
   name,
   description,
-  schema,
-  handler,
 };
+
+export default handler;

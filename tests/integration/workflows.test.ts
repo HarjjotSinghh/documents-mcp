@@ -3,11 +3,11 @@ import * as fs from "fs/promises";
 import * as path from "path";
 
 // Import tools (default exports)
-import createPdfTool from "../../src/tools/create-pdf";
-import createDocxTool from "../../src/tools/create-docx";
-import createPptxTool from "../../src/tools/create-pptx";
-import readPdfTool from "../../src/tools/read-pdf";
-import readDocxTool from "../../src/tools/read-docx";
+import createPdfHandler, { schema as createPdfSchema } from "../../src/tools/create-pdf";
+import createDocxHandler, { schema as createDocxSchema } from "../../src/tools/create-docx";
+import createPptxHandler, { schema as createPptxSchema } from "../../src/tools/create-pptx";
+import readPdfHandler, { schema as readPdfSchema } from "../../src/tools/read-pdf";
+import readDocxHandler, { schema as readDocxSchema } from "../../src/tools/read-docx";
 
 const TEST_OUTPUT_DIR = path.join(process.cwd(), "tests/fixtures/integration");
 
@@ -58,7 +58,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
         outputPath: pdfPath,
         pageSize: "A4" as const,
       };
-      const createResult = await createPdfTool.handler(createPdfTool.schema.parse(createInput));
+      const createResult = await createPdfHandler(createPdfSchema.parse(createInput));
 
       expect(createResult.success).toBe(true);
       expect(createResult.pageCount).toBeGreaterThanOrEqual(2);
@@ -70,7 +70,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
 
       // Read the PDF back
       const readInput = { filePath: pdfPath };
-      const readResult = await readPdfTool.handler(readPdfTool.schema.parse(readInput));
+      const readResult = await readPdfHandler(readPdfSchema.parse(readInput));
       expect(readResult.success).toBe(true);
       if (readResult.success) {
         // @ts-expect-error - intentionally passing invalid input
@@ -88,7 +88,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
           { type: "text", content: "Testing base64 encoding and decoding." } as const,
         ],
       };
-      const createResult = await createPdfTool.handler(createPdfTool.schema.parse(createInput));
+      const createResult = await createPdfHandler(createPdfSchema.parse(createInput));
 
       expect(createResult.success).toBe(true);
       expect(createResult.base64).toBeDefined();
@@ -97,7 +97,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
       const readInput = {
         base64Content: createResult.base64 as string,
       };
-      const readResult = await readPdfTool.handler(readPdfTool.schema.parse(readInput));
+      const readResult = await readPdfHandler(readPdfSchema.parse(readInput));
 
 
       expect(readResult.success).toBe(true);
@@ -154,7 +154,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
         ],
         outputPath: docxPath,
       };
-      const createResult = await createDocxTool.handler(createDocxTool.schema.parse(createInput));
+      const createResult = await createDocxHandler(createDocxSchema.parse(createInput));
 
       expect(createResult.success).toBe(true);
       expect(createResult.filePath).toBe(docxPath);
@@ -164,7 +164,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
         filePath: docxPath,
         outputFormat: "both" as const,
       };
-      const readResult = await readDocxTool.handler(readDocxTool.schema.parse(readInput));
+      const readResult = await readDocxHandler(readDocxSchema.parse(readInput));
 
 
       expect(readResult.success).toBe(true);
@@ -193,7 +193,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
           { type: "text", content: "Italic text here", italic: true } as const,
         ],
       };
-      const createResult = await createDocxTool.handler(createDocxTool.schema.parse(createInput));
+      const createResult = await createDocxHandler(createDocxSchema.parse(createInput));
 
       expect(createResult.success).toBe(true);
 
@@ -201,7 +201,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
         base64Content: createResult.base64 as string,
         outputFormat: "html" as const,
       };
-      const readResult = await readDocxTool.handler(readDocxTool.schema.parse(readInput));
+      const readResult = await readDocxHandler(readDocxSchema.parse(readInput));
 
 
       expect(readResult.success).toBe(true);
@@ -310,7 +310,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
         ],
         outputPath: pptxPath,
       };
-      const createResult = await createPptxTool.handler(createPptxTool.schema.parse(createInput));
+      const createResult = await createPptxHandler(createPptxSchema.parse(createInput));
 
 
       expect(createResult.success).toBe(true);
@@ -350,7 +350,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
           } as const,
         ],
       };
-      const createResult = await createPptxTool.handler(createPptxTool.schema.parse(createInput));
+      const createResult = await createPptxHandler(createPptxSchema.parse(createInput));
 
 
       expect(createResult.success).toBe(true);
@@ -374,7 +374,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
           { type: "table", headers: content.tableHeaders, rows: content.tableRows } as const,
         ],
       };
-      const pdfResult = await createPdfTool.handler(createPdfTool.schema.parse(pdfInput));
+      const pdfResult = await createPdfHandler(createPdfSchema.parse(pdfInput));
 
       // Create DOCX
       const docxInput = {
@@ -384,7 +384,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
           { type: "table", headers: content.tableHeaders, rows: content.tableRows } as const,
         ],
       };
-      const docxResult = await createDocxTool.handler(createDocxTool.schema.parse(docxInput));
+      const docxResult = await createDocxHandler(createDocxSchema.parse(docxInput));
 
       // Create PPTX
       const pptxInput = {
@@ -400,7 +400,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
           } as const,
         ],
       };
-      const pptxResult = await createPptxTool.handler(createPptxTool.schema.parse(pptxInput));
+      const pptxResult = await createPptxHandler(createPptxSchema.parse(pptxInput));
 
       expect(pdfResult.success).toBe(true);
       expect(docxResult.success).toBe(true);
@@ -411,7 +411,7 @@ describe("Integration Tests: Document Generation & Reading Flow", () => {
         base64Content: docxResult.base64 as string,
         outputFormat: "text" as const,
       };
-      const docxReadResult = await readDocxTool.handler(readDocxTool.schema.parse(docxReadInput));
+      const docxReadResult = await readDocxHandler(readDocxSchema.parse(docxReadInput));
 
 
       if (!docxReadResult.success) throw new Error(docxReadResult.error);

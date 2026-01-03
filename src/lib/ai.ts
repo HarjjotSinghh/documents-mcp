@@ -1,4 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Buffer } from "node:buffer";
+import process from "node:process";
 
 const MODEL_NAME = "gemini-3-flash-preview";
 
