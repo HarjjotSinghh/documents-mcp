@@ -1,6 +1,6 @@
 {
   "name": "documents-mcp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MCP server for creating and reading PDF, DOCX, and PPTX documents",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
