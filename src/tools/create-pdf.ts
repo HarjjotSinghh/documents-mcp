@@ -216,6 +216,7 @@ export default async function handler(input: z.infer<typeof schema>) {
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
   // Add title
+  y -= 28;
   page.drawText(title, {
     x: margin,
     y,
@@ -223,7 +224,7 @@ export default async function handler(input: z.infer<typeof schema>) {
     font: boldFont,
     color: rgb(0, 0, 0),
   });
-  y -= 40;
+  y -= 12;
 
   // Process content items
   for (const item of content) {
@@ -248,6 +249,7 @@ export default async function handler(input: z.infer<typeof schema>) {
           const testWidth = textFont.widthOfTextAtSize(testLine, item.fontSize);
 
           if (testWidth > maxWidth && line) {
+            y -= item.fontSize;
             page.drawText(line, {
               x: margin,
               y,
@@ -255,7 +257,7 @@ export default async function handler(input: z.infer<typeof schema>) {
               font: textFont,
               color: textColor,
             });
-            y -= item.fontSize + 4;
+            y -= 4;
             line = word;
 
             if (y < margin) {
@@ -268,6 +270,7 @@ export default async function handler(input: z.infer<typeof schema>) {
         }
 
         if (line) {
+          y -= item.fontSize;
           page.drawText(line, {
             x: margin,
             y,
@@ -275,13 +278,14 @@ export default async function handler(input: z.infer<typeof schema>) {
             font: textFont,
             color: textColor,
           });
-          y -= item.fontSize + 8;
+          y -= 8;
         }
         break;
       }
 
       case "heading": {
         const headingSize = getHeadingSize(item.level);
+        y -= headingSize;
         page.drawText(item.content, {
           x: margin,
           y,
@@ -289,7 +293,7 @@ export default async function handler(input: z.infer<typeof schema>) {
           font: boldFont,
           color: rgb(0, 0, 0),
         });
-        y -= headingSize + 12;
+        y -= 12;
         break;
       }
 
